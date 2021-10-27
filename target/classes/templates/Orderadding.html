@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>
+        Отправляем JSON-данные на сервер
+    </title>
+
+</head>
+<!-- скрипт, который обработает нажатие на кнопку и отправит данные на сервер -->
+<script>
+    // эта функция сработает при нажатии на кнопку
+    function sendJSON() {
+        // с помощью jQuery обращаемся к элементам на странице по их именам
+        let project_name = document.querySelector('#project_name');
+        let trs_link = document.querySelector('#trs_link');
+        let cost_of_an_order = document.querySelector('#cost_of_an_order');
+        let deadline = document.querySelector('#deadline');
+        // создаём новый экземпляр запроса XHR
+        let xhr = new XMLHttpRequest();
+        // адрес, куда мы отправим нашу JSON-строку
+        let url = "http://localhost:8083/addorder";
+        // открываем соединение
+        xhr.open("POST", url, true);
+        // устанавливаем заголовок — выбираем тип контента, который отправится на сервер, в нашем случае мы явно пишем, что это JSON
+        xhr.setRequestHeader("Content-Type", "application/json");
+        // когда придёт ответ на наше обращение к серверу, мы его обработаем здесь
+        xhr.onreadystatechange = function () {
+            // если запрос принят и сервер ответил, что всё в порядке
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                // выводим то, что ответил нам сервер — так мы убедимся, что данные он получил правильно
+                alert(this.responseText);
+            }
+        };
+        // преобразуем наши данные JSON в строку
+        var data = JSON.stringify({ "project_name": project_name.value, "trs_link": trs_link.value, "cost_of_an_order": cost_of_an_order.value,"deadline":deadline.value});
+        // когда всё готово, отправляем JSON на сервер
+        xhr.send(data);
+    }
+</script>
+<body style="text-align:center;" id="body">
+<!-- заголовок -->
+<h1> Простая форма для проверки работы JSON </h1>
+<!-- делаем форму с полями ввода -->
+<p>
+    <input type="text" id="project_name" placeholder="Имя проекта для добавления информации о заказе">
+    <input type="text" id="trs_link" placeholder="ссылка на тз">
+    <input type="text" id="cost_of_an_order" placeholder="стоимость проекта">
+    <input type="date" id="deadline" placeholder="дедлайн">
+    <!-- по нажатию на эту кнопку данные уйдут на сервер -->
+    <button onclick="sendJSON()">Проверить JSON</button>
+<p class="result" style="color:blue"></p>
+</p>
+</body>
+</html>
